@@ -58,7 +58,7 @@ class VexTabTests
     test "Mixed Tuplets", @mixedTuplets
     test "Accidental Strategies", @accidentalStrategies
     test "Fret-hand Fingering and String Numbers", @fingeringAndStrings
-
+    test "EndBar keeps tabs and notes aligned", @endBarFormat
   # Private method
   catchError = (assert, tab, code, error_type="ParseError") ->
     error =
@@ -624,4 +624,11 @@ class VexTabTests
     """
     renderTest assert, "Fret Hand Fingering and String Numbers", code
 
+  @endBarFormat: (assert) ->
+    code = """
+
+    tabstave notation=true tablature=true key=G time=4/4
+    notes :2  4/3 4/4  =:|
+    """
+    renderTest assert, "End Bar: Keep Notes and Tabs Aligned", code
 module.exports = VexTabTests

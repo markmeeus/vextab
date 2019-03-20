@@ -213,7 +213,11 @@ class Artist
       last_note = _.last(notes)
       if last_note instanceof Vex.Flow.BarNote
         notes.pop()
+        #Setting the endbar type causes the stave to 'format'
+        #which causes the start_x to reset, resulting in malaligned notes and tabs
+        tab_note_start_x = stave.getNoteStartX()
         stave.setEndBarType(last_note.getType())
+        stave.setNoteStartX(tab_note_start_x)
 
     for stave in @staves
       L "Rendering staves."
