@@ -645,6 +645,6 @@ class VexTabTests
     tabstave notation=true tablature=true key=G time=4/4
     notes :2  4/3 4/4  =:|
     """
-    renderTest assert, "End Bar: Keep Notes and Tabs Aligned", code
+    renderTest assert, "Changing key", code
 
 module.exports = VexTabTests

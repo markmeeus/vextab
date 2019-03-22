@@ -135,7 +135,6 @@ class Artist
       text_stave = tab_stave
 
     beam_config.beam_rests = parseBool(customizations["beam-rests"])
-
     if score?
       multi_voice = if (score.voices.length > 1) then true else false
       for notes, i in score.voices
@@ -209,15 +208,14 @@ class Artist
 
     @renderer_context = ctx
 
-    setBar = (stave, notes) ->
+    setBar = (stave, notes, formatted) ->
       last_note = _.last(notes)
       if last_note instanceof Vex.Flow.BarNote
         notes.pop()
-        #Setting the endbar type causes the stave to 'format'
-        #which causes the start_x to reset, resulting in malaligned notes and tabs
         tab_note_start_x = stave.getNoteStartX()
         stave.setEndBarType(last_note.getType())
         stave.setNoteStartX(tab_note_start_x)
+        #stave.formatted = formatted
 
     for stave in @staves
       L "Rendering staves."
@@ -959,6 +957,9 @@ class Artist
     _.extend(opts, options)
     L "addStave: ", element, opts
 
+    @tuning.setTuning(opts.tuning)
+    @key_manager.setKey(opts.key)
+
     tab_stave = null
     note_stave = null
 
@@ -970,7 +971,7 @@ class Artist
       note_stave = new Vex.Flow.Stave(start_x, @last_y, @customizations.width - 20,
         {left_bar: false})
       note_stave.addClef(opts.clef) if opts.clef isnt "none"
-      note_stave.addKeySignature(opts.key)
+      note_stave.addKeySignature(@key_manager.getKey())
       note_stave.addTimeSignature(opts.time) if opts.time?
 
       @last_y += note_stave.getHeight() +
@@ -999,11 +1000,7 @@ class Artist
       beam_groups: beam_groups
     }
 
-    @tuning.setTuning(opts.tuning)
-    @key_manager.setKey(opts.key)
-
     return
-
   addKeyChange: (key, cancel_key) ->
     throw new Vex.RERR("ArtistError", "Invalid key signature '#{key}'") unless _.has(Vex.Flow.keySignature.keySpecs, key)
     note_stave = @staves[@staves.length - 1].note
