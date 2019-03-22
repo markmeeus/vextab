@@ -58,7 +58,7 @@ class VexTabTests
     test "Mixed Tuplets", @mixedTuplets
     test "Accidental Strategies", @accidentalStrategies
     test "Fret-hand Fingering and String Numbers", @fingeringAndStrings
-
+    test "Change keys", @keyChange
   # Private method
   catchError = (assert, tab, code, error_type="ParseError") ->
     error =
@@ -624,4 +624,17 @@ class VexTabTests
     """
     renderTest assert, "Fret Hand Fingering and String Numbers", code
 
+  @keyChange: (assert) ->
+
+    code = """
+
+    tabstave notation=true tablature=true key=G time=4/4
+    notes :2  4/3 4/4  =|| !set-key Bb! 4/3 4/4 =|| !set-key F! 4/3 4/4 =|| !set-key D! 4/3 4/4
+    text :1 ,G, Bb, F, D
+
+    tabstave notation=true tablature=true key=G time=4/4
+    notes :2  4/3 4/4  =|| !change-key Bb! 4/3 4/4 =|| !change-key F! 4/3 4/4 =|| !change-key D! 4/3 4/4
+    text :1 ,G, Bb, F, D
+    """
+    renderTest assert, "Changing key", code
 module.exports = VexTabTests

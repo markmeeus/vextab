@@ -1000,6 +1000,21 @@ class Artist
 
     return
 
+  addKeyChange: (key, cancel_key) ->
+    throw new Vex.RERR("ArtistError", "Invalid key signature '#{key}'") unless _.has(Vex.Flow.keySignature.keySpecs, key)
+    note_stave = @staves[@staves.length - 1].note
+
+    keysig_note = new Vex.Flow.KeySigNote(key, cancel_key)
+
+    _.last(@staves).note_notes.push(keysig_note)
+    _.last(@staves).tab_notes.push(keysig_note)
+    note_voice = _.last(_.last(@staves).note_voices)
+
+    if(note_voice)
+      note_voice.push(keysig_note)
+
+    @key_manager.setKey(key)
+
   runCommand: (line, _l=0, _c=0) ->
     L "runCommand: ", line
     words = line.split(/\s+/)
@@ -1007,6 +1022,16 @@ class Artist
       when "octave-shift"
         @current_octave_shift = parseInt(words[1], 10)
         L "Octave shift: ", @current_octave_shift
+
+      when "set-key"
+        key = words[1]
+        @addKeyChange(key, null)
+
+      when "change-key"
+        key = words[1]
+        cancel_key = @key_manager.getKey()
+        @addKeyChange(key, cancel_key)
+
       else
         throw new Vex.RERR("ArtistError", "Invalid command '#{words[0]}' at line #{_l} column #{_c}")
 
