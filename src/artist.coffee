@@ -1006,16 +1006,23 @@ class Artist
 
   addKeyChange: (key, cancel_key) ->
     throw new Vex.RERR("ArtistError", "Invalid key signature '#{key}'") unless _.has(Vex.Flow.keySignature.keySpecs, key)
-    note_stave = @staves[@staves.length - 1].note
 
-    keysig_note = new Vex.Flow.KeySigNote(key, cancel_key)
+    if(_.last(@staves).note_notes.length > 0)
+      keysig_note = new Vex.Flow.KeySigNote(key, cancel_key)
+      _.last(@staves).note_notes.push(keysig_note)
+      _.last(@staves).tab_notes.push(keysig_note)
 
-    _.last(@staves).note_notes.push(keysig_note)
-    _.last(@staves).tab_notes.push(keysig_note)
-    note_voice = _.last(_.last(@staves).note_voices)
-
-    if(note_voice)
-      note_voice.push(keysig_note)
+      note_voice = _.last(_.last(@staves).note_voices)
+      if(note_voice)
+        note_voice.push(keysig_note)
+    else
+      note_stave = _.last(@staves).note
+      tab_stave =  _.last(@staves).tab
+      tab_stave_start_x = note_stave.getNoteStartX()
+      note_stave.setKeySignature(key)
+      note_stave.format()
+      tab_stave_start_x = note_stave.getNoteStartX()
+      tab_stave.setNoteStartX(tab_stave_start_x)
 
     @key_manager.setKey(key)
 

@@ -636,6 +636,10 @@ class VexTabTests
     tabstave notation=true tablature=true key=G time=4/4
     notes :2  4/3 4/4  =|| !change-key Bb! 4/3 4/4 =|| !change-key F! 4/3 4/4 =|| !change-key D! 4/3 4/4
     text :1 ,G, Bb, F, D
+
+    tabstave notation=true tablature=true key=G time=4/4
+    notes :1 !change-key E! 0/1 =||
+
     """
     renderTest assert, "Changing key", code
 
