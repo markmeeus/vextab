@@ -1042,6 +1042,14 @@ class Artist
         key = words[1]
         cancel_key = @key_manager.getKey()
         @addKeyChange(key, cancel_key)
+      when "set-beam-time"
+        time = words[1]
+        console.log(JSON.stringify(_.last(@staves).beam_groups))
+        console.log(time)
+        console.log(JSON.stringify(Vex.Flow.Beam.getDefaultBeamGroups(time)))
+        _.last(@staves).beam_groups =
+          Vex.Flow.Beam.getDefaultBeamGroups(time)
+        console.log(JSON.stringify(_.last(@staves).beam_groups))
 
       else
         throw new Vex.RERR("ArtistError", "Invalid command '#{words[0]}' at line #{_l} column #{_c}")
